@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Super-Algo: Дерево Навичок & 5-Рівнева Декомпозиція</title>
+  <!-- PWA Manifest & Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#111827">
+  <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/git-branch.svg">
+  <!-- HTML2PDF for PDF cheat-sheet export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js for Team Radar -->
@@ -127,6 +133,10 @@
       <button id="viewTabQuiz" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition">
         <i data-lucide="help-circle" class="w-4 h-4 text-cyan-400"></i>
         <span>Quiz-Тренер</span>
+      </button>
+      <button id="viewTabAnalytics" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition">
+        <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+        <span>Аналітика</span>
       </button>
       <a href="ucpc_animator.html" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-emerald-400 hover:text-emerald-300 transition">
         <i data-lucide="play-circle" class="w-4 h-4"></i>
@@ -532,6 +542,70 @@ graph TD
 
             <!-- Quiz Feedback block -->
             <div id="quizFeedbackBlock" class="p-4 rounded-xl text-xs leading-relaxed hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 6: TEAM ANALYTICS & INSIGHTS ================= -->
+      <section id="sectionAnalytics" class="flex flex-col gap-6 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-algoCard/80 border border-algoBorder rounded-xl p-4">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
+              <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-white">Дашборд Командної Аналітики</h2>
+              <p class="text-xs text-gray-400">Розподіл розв'язаних задач, покриття категорій та досягнення команди</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Solved by Category Bar Chart -->
+          <div class="bg-gray-900 border border-gray-700 rounded-2xl p-5 flex flex-col gap-3 shadow-lg">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i> Розподіл Розв'язаних Задач за Доменами
+            </h3>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="categorySolvedChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Achievements Badges Showcase -->
+          <div class="bg-gray-900 border border-gray-700 rounded-2xl p-5 flex flex-col gap-3 shadow-lg">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-amber-400"></i> Олімпіадні Відзнаки та Досягнення
+            </h3>
+            <div id="achievementsList" class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-3 bg-gray-800/60 border border-amber-500/30 rounded-xl flex items-center gap-3">
+                <div class="text-2xl">🌱</div>
+                <div>
+                  <div class="font-bold text-white">Перші Кроки</div>
+                  <div class="text-[10px] text-gray-400">Освоєно перші 5 тем</div>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-800/60 border border-purple-500/30 rounded-xl flex items-center gap-3">
+                <div class="text-2xl">🎭</div>
+                <div>
+                  <div class="font-bold text-white">Bitmask Магістр</div>
+                  <div class="text-[10px] text-gray-400">Перебір підмасок за O(3^N)</div>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-800/60 border border-emerald-500/30 rounded-xl flex items-center gap-3">
+                <div class="text-2xl">⚡</div>
+                <div>
+                  <div class="font-bold text-white">Спідраннер Дейкстри</div>
+                  <div class="text-[10px] text-gray-400">0-1 BFS + Priority Queue</div>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-800/60 border border-blue-500/30 rounded-xl flex items-center gap-3">
+                <div class="text-2xl">🛡️</div>
+                <div>
+                  <div class="font-bold text-white">Анти-Граблі Щит</div>
+                  <div class="text-[10px] text-gray-400">1LL & fast I/O інваріант</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1360,12 +1434,12 @@ graph TD
 
     function setActiveView(tabName) {
       // Reset button classes
-      [viewTabTree, viewTabDecomp, viewTabMindMap, viewTabSRS, viewTabQuiz].forEach(btn => {
+      [viewTabTree, viewTabDecomp, viewTabMindMap, viewTabSRS, viewTabQuiz, viewTabAnalytics].forEach(btn => {
         if (btn) btn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition';
       });
 
       // Hide all sections
-      [sectionTree, sectionDecomposition, sectionMindMap, sectionSRS, sectionQuiz].forEach(sec => {
+      [sectionTree, sectionDecomposition, sectionMindMap, sectionSRS, sectionQuiz, sectionAnalytics].forEach(sec => {
         if (sec) sec.classList.add('hidden');
       });
 
@@ -1388,6 +1462,10 @@ graph TD
         viewTabQuiz.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-cyan-600 text-white shadow-sm transition';
         sectionQuiz.classList.remove('hidden');
         initQuiz();
+      } else if (tabName === 'analytics') {
+        if (viewTabAnalytics) viewTabAnalytics.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 text-white shadow-sm transition';
+        if (sectionAnalytics) sectionAnalytics.classList.remove('hidden');
+        renderAnalytics();
       }
       lucide.createIcons();
     }
@@ -1397,6 +1475,130 @@ graph TD
     if (viewTabMindMap) viewTabMindMap.onclick = () => setActiveView('mindmap');
     if (viewTabSRS) viewTabSRS.onclick = () => setActiveView('srs');
     if (viewTabQuiz) viewTabQuiz.onclick = () => setActiveView('quiz');
+    const viewTabAnalytics = document.getElementById('viewTabAnalytics');
+    const sectionAnalytics = document.getElementById('sectionAnalytics');
+    if (viewTabAnalytics) viewTabAnalytics.onclick = () => setActiveView('analytics');
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.warn('SW registration info:', err);
+        });
+      });
+    }
+
+    // Keyboard Shortcuts (1-6 for views, / or Ctrl+K for search)
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === '1') setActiveView('tree');
+      else if (e.key === '2') setActiveView('decomp');
+      else if (e.key === '3') setActiveView('mindmap');
+      else if (e.key === '4') setActiveView('srs');
+      else if (e.key === '5') setActiveView('quiz');
+      else if (e.key === '6') setActiveView('analytics');
+      else if (e.key === '/' || (e.ctrlKey && e.key === 'k')) {
+        e.preventDefault();
+        const searchBox = document.getElementById('searchInput');
+        if (searchBox) {
+          setActiveView('tree');
+          searchBox.focus();
+        }
+      }
+    });
+
+    // PDF Cheat-sheet Exporter
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+    if (exportPdfBtn) {
+      exportPdfBtn.onclick = () => {
+        const elem = document.getElementById('sectionDecomposition');
+        const wasHidden = elem.classList.contains('hidden');
+        elem.classList.remove('hidden');
+        
+        const opt = {
+          margin: 8,
+          filename: 'Super-Algo-CheatSheet.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#0B0F19' },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        if (window.html2pdf) {
+          alert('Генеруємо PDF-шпаргалку... Зачекайте декілька секунд!');
+          html2pdf().set(opt).from(elem).save().then(() => {
+            if (wasHidden) elem.classList.add('hidden');
+          });
+        } else {
+          window.print();
+        }
+      };
+    }
+
+    // Render Analytics Chart
+    let analyticsChartInstance = null;
+    function renderAnalytics() {
+      const ctx = document.getElementById('categorySolvedChart');
+      if (!ctx || !window.Chart) return;
+
+      const member = getCurrentMember();
+      const catTotals = { basics: 0, dp: 0, graphs: 0, ds: 0, math: 0, strings: 0, contest: 0 };
+      
+      SKILLS_DATA.forEach(s => {
+        const st = member.skills?.[s.id];
+        if (st && catTotals[s.cat] !== undefined) {
+          catTotals[s.cat] += (st.solved || 0);
+        }
+      });
+
+      const labels = ['Базові', 'ДП', 'Графи', 'Структури', 'Математика', 'Рядки', 'Тактика'];
+      const dataValues = [
+        catTotals.basics, catTotals.dp, catTotals.graphs, 
+        catTotals.ds, catTotals.math, catTotals.strings, catTotals.contest
+      ];
+
+      if (analyticsChartInstance) analyticsChartInstance.destroy();
+
+      analyticsChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Задач розв\'язано',
+            data: dataValues,
+            backgroundColor: [
+              'rgba(59, 130, 246, 0.7)',
+              'rgba(147, 51, 234, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(245, 158, 11, 0.7)',
+              'rgba(244, 63, 94, 0.7)',
+              'rgba(6, 182, 212, 0.7)',
+              'rgba(99, 102, 241, 0.7)'
+            ],
+            borderColor: '#374151',
+            borderWidth: 1,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' },
+              ticks: { color: '#9CA3AF' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#9CA3AF' }
+            }
+          }
+        }
+      });
+    }
 
     // ==========================================
     // SRS (SPACED REPETITION) ENGINE

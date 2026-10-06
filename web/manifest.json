@@ -1,0 +1,17 @@
+{
+  "name": "Super-Algo Олімпіадна Екосистема",
+  "short_name": "Super-Algo",
+  "description": "5-Рівнева декомпозиція алгоритмів, дерево навичок команди, SRS картки та інструменти стрес-тестування",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/icons/git-branch.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
