@@ -16,9 +16,9 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 def print_banner():
-    print("=" * 65)
+    print("=" * 68)
     print("  🚀 SUPER-ALGO: ОЛІМПІАДНИЙ КОМАНДНИЙ ЦЕНТР (UCPC / ICPC)")
-    print("=" * 65)
+    print("=" * 68)
 
 def open_skill_tree():
     html_file = (ROOT_DIR / "web" / "index.html").resolve().as_uri()
@@ -31,19 +31,37 @@ def open_animator():
     webbrowser.open(html_file)
 
 def run_all_tests():
-    print("\n[*] Запуск повного тестувального комплексу для всіх 14 задач...")
-    script = ROOT_DIR / "tasks" / "test_all_stage1.py"
-    if script.exists():
-        subprocess.run([sys.executable, str(script)], cwd=ROOT_DIR / "tasks")
-    else:
-        runners = list((ROOT_DIR / "tasks").glob("**/test_runner.py"))
-        for r in runners:
-            print(f"\n--- Папка: {r.parent.name} ---")
-            subprocess.run([sys.executable, str(r)], cwd=r.parent)
+    print("\n[*] Запуск повного тестувального комплексу для всіх задач...")
+    script1 = ROOT_DIR / "tasks" / "test_all_stage1.py"
+    script2 = ROOT_DIR / "tasks" / "test_all_practice.py"
+    if script1.exists():
+        print("\n--- Запуск UCPC Stage 1 тестів ---")
+        subprocess.run([sys.executable, str(script1)], cwd=ROOT_DIR / "tasks")
+    if script2.exists():
+        print("\n--- Запуск UCPC Practice тестів ---")
+        subprocess.run([sys.executable, str(script2)], cwd=ROOT_DIR / "tasks")
+
+def run_stress_test_wizard():
+    print("\n=== 🧪 Майстер запуску стрес-тесту ===")
+    gen = input("Шлях до генератора (напр. gen.py або Enter для виходу): ").strip()
+    if not gen:
+        return
+    fast = input("Шлях до швидкого розв'язку (напр. solution.cpp або solution.py): ").strip()
+    naive = input("Шлях до наївного розв'язку (напр. naive.py): ").strip()
+    tests = input("Кількість тестів [за замовчуванням 500]: ").strip()
+    tests = tests if tests else "500"
+    
+    script = ROOT_DIR / "scripts" / "stress_tester.py"
+    subprocess.run([sys.executable, str(script), gen, fast, naive, tests])
+
+def test_generators():
+    print("\n[*] Демонстрація генератора дерев та графів (test_gen_lib.py)...")
+    script = ROOT_DIR / "scripts" / "test_gen_lib.py"
+    subprocess.run([sys.executable, str(script)])
 
 def start_listener():
     script = ROOT_DIR / "scripts" / "companion_listener.py"
-    print(f"\n[*] Запуск Competitive Companion Listener...")
+    print(f"\n[*] Запуск Competitive Companion Listener (порт 10043)...")
     subprocess.run([sys.executable, str(script)])
 
 def scrape_eolymp():
@@ -64,12 +82,14 @@ def main():
         print(" [1] 🌳 Відкрити Дерево Навичок та 5-Рівневий Навігатор")
         print(" [2] 🎬 Відкрити Інтерактивний Аніматор Задач UCPC")
         print(" [3] 🧪 Запустити тести всіх розібраних задач")
-        print(" [4] 🔌 Запустити слухач Competitive Companion (порт 10043)")
-        print(" [5] 🕷️ Скрапити задачу з Eolymp за посиланням")
+        print(" [4] ⚡ Запустити стрес-тест (C++ / Python)")
+        print(" [5] 🎲 Тест бібліотеки генерації дерев/графів (test_gen_lib)")
+        print(" [6] 🔌 Запустити слухач Competitive Companion (порт 10043)")
+        print(" [7] 🕷️ Скрапити задачу з Eolymp за посиланням")
         print(" [0] 🚪 Вихід")
-        print("=" * 65)
+        print("=" * 68)
 
-        choice = input("Оберіть дію [0-5]: ").strip()
+        choice = input("Оберіть дію [0-7]: ").strip()
         if choice == "1":
             open_skill_tree()
             input("\nНатисніть Enter для повернення в меню...")
@@ -80,9 +100,15 @@ def main():
             run_all_tests()
             input("\nНатисніть Enter для повернення в меню...")
         elif choice == "4":
-            start_listener()
+            run_stress_test_wizard()
             input("\nНатисніть Enter для повернення в меню...")
         elif choice == "5":
+            test_generators()
+            input("\nНатисніть Enter для повернення в меню...")
+        elif choice == "6":
+            start_listener()
+            input("\nНатисніть Enter для повернення в меню...")
+        elif choice == "7":
             scrape_eolymp()
             input("\nНатисніть Enter для повернення в меню...")
         elif choice == "0":

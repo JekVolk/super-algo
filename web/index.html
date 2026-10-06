@@ -120,6 +120,14 @@
         <i data-lucide="network" class="w-4 h-4 text-amber-400"></i>
         <span>Ментальні Карти</span>
       </button>
+      <button id="viewTabSRS" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition">
+        <i data-lucide="brain" class="w-4 h-4 text-rose-400"></i>
+        <span>SRS Картки</span>
+      </button>
+      <button id="viewTabQuiz" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition">
+        <i data-lucide="help-circle" class="w-4 h-4 text-cyan-400"></i>
+        <span>Quiz-Тренер</span>
+      </button>
       <a href="ucpc_animator.html" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-emerald-400 hover:text-emerald-300 transition">
         <i data-lucide="play-circle" class="w-4 h-4"></i>
         <span>Анімація UCPC</span>
@@ -308,6 +316,9 @@
         <!-- Accordion Tree Container -->
         <div id="decompTreeContainer" class="flex flex-col gap-4">
           <!-- Rendered in real-time -->
+        </div>
+      </section>
+
       <!-- ================= VIEW 3: MERMAID MIND MAPS ================= -->
       <section id="sectionMindMap" class="flex flex-col gap-6 hidden">
         <div class="flex flex-wrap items-center justify-between gap-4 bg-algoCard/80 border border-algoBorder rounded-xl p-4">
@@ -410,6 +421,118 @@ graph TD
             </div>
           </div>
 
+        </div>
+      </section>
+
+      <!-- ================= VIEW 4: SPACED REPETITION (SRS) FLASHCARDS ================= -->
+      <section id="sectionSRS" class="flex flex-col gap-6 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-algoCard/80 border border-algoBorder rounded-xl p-4">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
+              <i data-lucide="brain" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-white">Інтервальне Повторення (Spaced Repetition / SRS)</h2>
+              <p class="text-xs text-gray-400">Закріплення нано-інсайтів, олімпіадних інваріантів та типових пасток (Gotchas)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="text-gray-400">Картка <span id="srsCardCounter" class="font-bold text-white">1</span> з <span id="srsCardTotal" class="text-gray-300">0</span></span>
+            <button id="srsShuffleBtn" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 rounded-lg border border-gray-700 flex items-center gap-1.5 transition">
+              <i data-lucide="shuffle" class="w-3.5 h-3.5 text-rose-400"></i> Перемішати
+            </button>
+          </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto w-full flex flex-col gap-5">
+          <!-- Card Front / Back Interactive Container -->
+          <div id="srsFlashcard" class="bg-gray-900 border border-gray-700 hover:border-gray-600 rounded-2xl p-7 min-h-[320px] flex flex-col justify-between cursor-pointer transition shadow-2xl relative">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-3">
+                <span id="srsCardDomainBadge" class="px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 font-medium">Тема</span>
+                <span class="text-gray-500 text-[11px] flex items-center gap-1"><i data-lucide="flip-horizontal" class="w-3.5 h-3.5"></i> Клікніть, щоб перевернути</span>
+              </div>
+              <h3 id="srsCardPrompt" class="text-lg font-bold text-white leading-snug mb-2">Запитання...</h3>
+              <p id="srsCardHint" class="text-xs text-gray-400">У чому полягає математичний інваріант та де тут типові олімпіадні граблі?</p>
+            </div>
+
+            <!-- Answer Block (Hidden initially) -->
+            <div id="srsCardAnswerBlock" class="mt-4 pt-4 border-t border-gray-800 flex flex-col gap-3 hidden">
+              <div>
+                <span class="text-[11px] font-semibold text-emerald-400 uppercase tracking-wider">💡 Атомарний Інсайт & Інваріант:</span>
+                <p id="srsCardAnswer" class="text-xs text-gray-200 leading-relaxed mt-1"></p>
+              </div>
+              <div class="p-3 bg-red-950/20 border border-red-900/40 rounded-xl">
+                <span class="text-[11px] font-semibold text-red-400 uppercase tracking-wider">⚠️ Олімпіадні Граблі (Gotcha):</span>
+                <p id="srsCardTrap" class="text-xs text-red-200 leading-relaxed mt-1"></p>
+              </div>
+              <div id="srsCodeContainer" class="hidden">
+                <span class="text-[11px] font-semibold text-blue-400 uppercase tracking-wider">💻 Еталонний Snippet:</span>
+                <pre class="bg-black/60 p-3 rounded-lg text-xs font-mono text-emerald-300 mt-1 overflow-x-auto"><code id="srsCardCode"></code></pre>
+              </div>
+            </div>
+
+            <div id="srsCardFooterPrompt" class="text-center text-xs text-gray-500 mt-4">
+              👆 Натисніть на картку для перевірки відповіді
+            </div>
+          </div>
+
+          <!-- Difficulty Rating Buttons -->
+          <div id="srsRatingBar" class="grid grid-cols-3 gap-3 hidden">
+            <button id="srsAgainBtn" class="py-2.5 px-4 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Не знав (Знов)
+            </button>
+            <button id="srsGoodBtn" class="py-2.5 px-4 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Згадав (Добре)
+            </button>
+            <button id="srsEasyBtn" class="py-2.5 px-4 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i> Знаю на пам'ять ⭐
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW 5: OLYMPIAD ALGORITHM QUIZ TRAINER ================= -->
+      <section id="sectionQuiz" class="flex flex-col gap-6 hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-algoCard/80 border border-algoBorder rounded-xl p-4">
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg">
+              <i data-lucide="help-circle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-white">Quiz-Тренер Рефлексів: "Який Алгоритм Обрати?"</h2>
+              <p class="text-xs text-gray-400">Тренуйте навичку миттєвого вибору алгоритму за сигнатурою обмежень та умовами задачі за 30 секунд</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <span class="text-gray-400">Очки: <span id="quizScore" class="font-bold text-cyan-400">0</span></span>
+            <button id="quizNextBtn" class="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5">
+              <span>Наступне</span> <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto w-full flex flex-col gap-5">
+          <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 flex flex-col gap-4 shadow-xl">
+            <div class="flex items-center justify-between">
+              <span id="quizDifficultyBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Складність: Div.2 C</span>
+              <span id="quizTimerDisplay" class="font-mono text-xs text-gray-400 flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i> 30s</span>
+            </div>
+
+            <div class="p-4 bg-gray-950/60 border border-gray-800 rounded-xl">
+              <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Умова / Ситуація:</span>
+              <p id="quizQuestionText" class="text-sm font-medium text-white leading-relaxed"></p>
+              <div id="quizConstraintsBox" class="mt-2 text-xs font-mono text-amber-300/90 bg-amber-950/20 p-2 rounded-lg border border-amber-900/30"></div>
+            </div>
+
+            <span class="text-xs font-semibold text-gray-300 uppercase tracking-wider">Оберіть найбільш оптимальний алгоритм:</span>
+            <div id="quizOptionsContainer" class="flex flex-col gap-2.5">
+              <!-- Dynamically populated 4 options -->
+            </div>
+
+            <!-- Quiz Feedback block -->
+            <div id="quizFeedbackBlock" class="p-4 rounded-xl text-xs leading-relaxed hidden"></div>
+          </div>
         </div>
       </section>
 
@@ -518,7 +641,8 @@ graph TD
   <!-- Application Logic -->
   <script>
     // 5-LEVEL ULTRA DECOMPOSITION KNOWLEDGE BASE
-    const KNOWLEDGE_TREE = [
+    // Embedded fallback for file:// protocol, dynamically overridable by docs/knowledge_tree.json
+    let DEFAULT_KNOWLEDGE_TREE = [
       {
         macro_id: 'macro_dp',
         macro_title: '1. Динамічне Програмування (Dynamic Programming Mastery)',
@@ -1068,6 +1192,24 @@ graph TD
       }
     ];
 
+    let KNOWLEDGE_TREE = DEFAULT_KNOWLEDGE_TREE;
+
+    async function loadKnowledgeTree() {
+      try {
+        const res = await fetch('../docs/knowledge_tree.json');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            KNOWLEDGE_TREE = data;
+            renderDecompositionTree();
+            renderStats();
+            console.log('⚡ Loaded knowledge tree from docs/knowledge_tree.json');
+          }
+        }
+      } catch (err) {
+        console.warn('Using embedded fallback knowledge tree:', err);
+      }
+    }
     // Classic Skill Tree Taxonomy (View 1)
     const SKILLS_DATA = [
       { id: 'prefix_sums', cat: 'basics', tier: 1, title: 'Префіксні суми та різницевий масив', desc: 'Швидкий підрахунок сум на відрізках за O(1) та масове додавання до підвідрізка за O(1).', practice: ['CSES: Subarray Sums II', 'LeetCode: 560. Subarray Sum Equals K', 'Codeforces: Kuriyama Mirai\'s Stones'] },
@@ -1207,19 +1349,25 @@ graph TD
     const viewTabTree = document.getElementById('viewTabTree');
     const viewTabDecomp = document.getElementById('viewTabDecomp');
     const viewTabMindMap = document.getElementById('viewTabMindMap');
+    const viewTabSRS = document.getElementById('viewTabSRS');
+    const viewTabQuiz = document.getElementById('viewTabQuiz');
+
     const sectionTree = document.getElementById('sectionTree');
     const sectionDecomposition = document.getElementById('sectionDecomposition');
     const sectionMindMap = document.getElementById('sectionMindMap');
+    const sectionSRS = document.getElementById('sectionSRS');
+    const sectionQuiz = document.getElementById('sectionQuiz');
 
     function setActiveView(tabName) {
-      // Reset classes
-      viewTabTree.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition';
-      viewTabDecomp.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition';
-      viewTabMindMap.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition';
+      // Reset button classes
+      [viewTabTree, viewTabDecomp, viewTabMindMap, viewTabSRS, viewTabQuiz].forEach(btn => {
+        if (btn) btn.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-gray-400 hover:text-white transition';
+      });
 
-      sectionTree.classList.add('hidden');
-      sectionDecomposition.classList.add('hidden');
-      sectionMindMap.classList.add('hidden');
+      // Hide all sections
+      [sectionTree, sectionDecomposition, sectionMindMap, sectionSRS, sectionQuiz].forEach(sec => {
+        if (sec) sec.classList.add('hidden');
+      });
 
       if (tabName === 'tree') {
         viewTabTree.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 text-white shadow-sm transition';
@@ -1232,13 +1380,220 @@ graph TD
         viewTabMindMap.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 text-white shadow-sm transition';
         sectionMindMap.classList.remove('hidden');
         if (window.mermaid) mermaid.run();
+      } else if (tabName === 'srs') {
+        viewTabSRS.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-600 text-white shadow-sm transition';
+        sectionSRS.classList.remove('hidden');
+        initSRS();
+      } else if (tabName === 'quiz') {
+        viewTabQuiz.className = 'flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-cyan-600 text-white shadow-sm transition';
+        sectionQuiz.classList.remove('hidden');
+        initQuiz();
       }
       lucide.createIcons();
     }
 
-    viewTabTree.onclick = () => setActiveView('tree');
-    viewTabDecomp.onclick = () => setActiveView('decomp');
-    viewTabMindMap.onclick = () => setActiveView('mindmap');
+    if (viewTabTree) viewTabTree.onclick = () => setActiveView('tree');
+    if (viewTabDecomp) viewTabDecomp.onclick = () => setActiveView('decomp');
+    if (viewTabMindMap) viewTabMindMap.onclick = () => setActiveView('mindmap');
+    if (viewTabSRS) viewTabSRS.onclick = () => setActiveView('srs');
+    if (viewTabQuiz) viewTabQuiz.onclick = () => setActiveView('quiz');
+
+    // ==========================================
+    // SRS (SPACED REPETITION) ENGINE
+    // ==========================================
+    let srsDeck = [];
+    let srsCurrentIdx = 0;
+    let srsIsFlipped = false;
+
+    function buildSRSDeck() {
+      srsDeck = [];
+      KNOWLEDGE_TREE.forEach(macro => {
+        macro.topics.forEach(t => {
+          t.subtopics.forEach(s => {
+            s.microtopics.forEach(mi => {
+              mi.nanotopics.forEach(na => {
+                srsDeck.push({
+                  macro_title: macro.macro_title.split('.')[1] || macro.macro_title,
+                  topic_title: t.topic_title,
+                  subtopic_title: s.subtopic_title,
+                  micro_title: mi.micro_title,
+                  nano_title: na.nano_title,
+                  summary: na.summary,
+                  invariant: na.invariant,
+                  contest_trap: na.contest_trap,
+                  code_snippet: na.code_snippet
+                });
+              });
+            });
+          });
+        });
+      });
+    }
+
+    function initSRS() {
+      if (srsDeck.length === 0) buildSRSDeck();
+      document.getElementById('srsCardTotal').textContent = srsDeck.length;
+      showSRSCard(srsCurrentIdx);
+    }
+
+    function showSRSCard(idx) {
+      if (srsDeck.length === 0) return;
+      srsCurrentIdx = (idx + srsDeck.length) % srsDeck.length;
+      const card = srsDeck[srsCurrentIdx];
+      srsIsFlipped = false;
+
+      document.getElementById('srsCardCounter').textContent = srsCurrentIdx + 1;
+      document.getElementById('srsCardDomainBadge').textContent = card.topic_title;
+      document.getElementById('srsCardPrompt').textContent = card.nano_title;
+      document.getElementById('srsCardHint').textContent = `${card.subtopic_title} • ${card.summary}`;
+
+      const answerBlock = document.getElementById('srsCardAnswerBlock');
+      answerBlock.classList.add('hidden');
+      document.getElementById('srsCardAnswer').textContent = card.invariant;
+      document.getElementById('srsCardTrap').textContent = card.contest_trap;
+
+      const codeBox = document.getElementById('srsCodeContainer');
+      const codeElem = document.getElementById('srsCardCode');
+      if (card.code_snippet) {
+        codeElem.textContent = card.code_snippet;
+        codeBox.classList.remove('hidden');
+      } else {
+        codeBox.classList.add('hidden');
+      }
+
+      document.getElementById('srsCardFooterPrompt').classList.remove('hidden');
+      document.getElementById('srsRatingBar').classList.add('hidden');
+    }
+
+    function flipSRSCard() {
+      if (!srsIsFlipped) {
+        srsIsFlipped = true;
+        document.getElementById('srsCardAnswerBlock').classList.remove('hidden');
+        document.getElementById('srsCardFooterPrompt').classList.add('hidden');
+        document.getElementById('srsRatingBar').classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('srsFlashcard').onclick = flipSRSCard;
+    document.getElementById('srsShuffleBtn').onclick = () => {
+      srsDeck.sort(() => Math.random() - 0.5);
+      showSRSCard(0);
+    };
+    document.getElementById('srsAgainBtn').onclick = () => showSRSCard(srsCurrentIdx + 1);
+    document.getElementById('srsGoodBtn').onclick = () => showSRSCard(srsCurrentIdx + 1);
+    document.getElementById('srsEasyBtn').onclick = () => showSRSCard(srsCurrentIdx + 1);
+
+    // ==========================================
+    // QUIZ REFLEX ENGINE
+    // ==========================================
+    const QUIZ_QUESTIONS = [
+      {
+        question: "Дано дерево з N=200,000 вершин. Потрібно обробити Q=200,000 запитів найменшого спільного предка LCA(u, v).",
+        constraints: "N, Q <= 2e5, Time Limit: 1.5s",
+        difficulty: "Div.2 C / ICPC Easy",
+        correct: 1,
+        options: [
+          "Звичайний BFS від кореня для кожного запиту за O(N)",
+          "Binary Lifting (двійкові підйоми up[u][i]) за O(N log N) препроцесинг і O(log N) на запит",
+          "Флойд-Воршелл O(N^3)",
+          "Дейкстра для кожної пари O(Q * M log N)"
+        ],
+        explanation: "Binary Lifting — золотий стандарт олімпіадних дерев: O(N log N) пам'ять і O(log N) швидкість."
+      },
+      {
+        question: "Масив A довжиною N=100,000. Потрібно знаходити кількість підмасивів, сума яких строго дорівнює K. Елементи можуть бути від'ємними.",
+        constraints: "N <= 1e5, |A_i| <= 1e9, K <= 1e14",
+        difficulty: "LeetCode Medium / Div.2 B",
+        correct: 0,
+        options: [
+          "Префіксні суми + Хеш-таблиця частот pref[R] - pref[L] = K за O(N)",
+          "Два вказівники (Two Pointers) за O(N)",
+          "Перебір усіх підмасивів за O(N^2)",
+          "Бінарний пошук по масиву за O(N log N)"
+        ],
+        explanation: "Два вказівники НЕ працюють з від'ємними числами (втрачається монотонність). Працює лише префіксний хеш-мап O(N)."
+      },
+      {
+        question: "Орієнтований зважений граф, де ваги ребер приймають ТІЛЬКИ значення 0 або 1. Знайти найкоротший шлях між стартом і фінішем.",
+        constraints: "V, E <= 500,000, Time Limit: 0.5s",
+        difficulty: "Div.2 C",
+        correct: 2,
+        options: [
+          "Алгоритм Беллмана-Форда за O(V * E)",
+          "Дейкстра з priority_queue за O(E log V)",
+          "0-1 BFS на std::deque (push_front для 0, push_back для 1) за строго лінійний час O(V + E)",
+          "Алгоритм Краскала"
+        ],
+        explanation: "0-1 BFS обробляє ваги 0/1 за чистий O(V + E) без логарифмічних витрат черги з пріоритетом."
+      },
+      {
+        question: "Дано N=20 міст. Потрібно знайти мінімальну довжину маршруту комівояжера, що відвідує кожне місто рівно один раз.",
+        constraints: "N <= 20, Time Limit: 2.0s",
+        difficulty: "Div.2 D / ICPC Medium",
+        correct: 3,
+        options: [
+          "Жадібний вибір найближчого сусіда за O(N^2)",
+          "Повний перебір усіх N! перестановок (20! > 2.4e18)",
+          "Convex Hull Trick за O(N log N)",
+          "Bitmask DP зі станом dp[mask][last_v] за O(2^N * N^2)"
+        ],
+        explanation: "При N <= 20 число 2^20 ~ 10^6 дозволяє динаміку по масках за ~ 8 * 10^7 операцій."
+      }
+    ];
+
+    let quizScore = 0;
+    let quizCurrentIdx = 0;
+    let quizAnswered = false;
+
+    function initQuiz() {
+      showQuizQuestion(quizCurrentIdx);
+    }
+
+    function showQuizQuestion(idx) {
+      quizCurrentIdx = idx % QUIZ_QUESTIONS.length;
+      quizAnswered = false;
+      const q = QUIZ_QUESTIONS[quizCurrentIdx];
+
+      document.getElementById('quizDifficultyBadge').textContent = `Рівень: ${q.difficulty}`;
+      document.getElementById('quizQuestionText').textContent = q.question;
+      document.getElementById('quizConstraintsBox').textContent = `Обмеження: ${q.constraints}`;
+
+      const feedback = document.getElementById('quizFeedbackBlock');
+      feedback.classList.add('hidden');
+
+      const optionsBox = document.getElementById('quizOptionsContainer');
+      optionsBox.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3.5 rounded-xl border border-gray-700 bg-gray-800/80 hover:bg-gray-800 hover:border-gray-500 text-xs text-gray-200 transition';
+        btn.innerHTML = `<span class="font-mono text-cyan-400 font-bold mr-2">[${String.fromCharCode(65 + optIdx)}]</span> ${optText}`;
+
+        btn.onclick = () => {
+          if (quizAnswered) return;
+          quizAnswered = true;
+
+          const isCorrect = optIdx === q.correct;
+          if (isCorrect) {
+            quizScore += 100;
+            document.getElementById('quizScore').textContent = quizScore;
+            btn.className = 'w-full text-left p-3.5 rounded-xl border border-emerald-500 bg-emerald-950/40 text-emerald-200 text-xs font-semibold';
+            feedback.className = 'p-4 rounded-xl text-xs leading-relaxed bg-emerald-950/30 border border-emerald-500/40 text-emerald-200 block';
+            feedback.innerHTML = `✅ <strong>Точно в ціль!</strong> ${q.explanation}`;
+          } else {
+            btn.className = 'w-full text-left p-3.5 rounded-xl border border-red-500 bg-red-950/40 text-red-200 text-xs font-semibold';
+            feedback.className = 'p-4 rounded-xl text-xs leading-relaxed bg-red-950/30 border border-red-500/40 text-red-200 block';
+            feedback.innerHTML = `❌ <strong>Ні, це приведе до TLE або WA!</strong> Правильна відповідь: <strong>[${String.fromCharCode(65 + q.correct)}]</strong>. ${q.explanation}`;
+          }
+        };
+
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    document.getElementById('quizNextBtn').onclick = () => {
+      showQuizQuestion(quizCurrentIdx + 1);
+    };
 
     // Mind Map Sub-tabs
     const mmBtnDecision = document.getElementById('mmBtnDecision');
@@ -1911,6 +2266,7 @@ graph TD
     renderMembers();
     renderStats();
     renderSkills();
+    loadKnowledgeTree();
   </script>
 </body>
 </html>
