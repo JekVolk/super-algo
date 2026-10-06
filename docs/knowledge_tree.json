@@ -1,0 +1,515 @@
+[
+  {
+    "macro_id": "macro_dp",
+    "macro_title": "1. Динамічне Програмування (Dynamic Programming Mastery)",
+    "description": "Оптимізаційні задачі з властивістю оптимальної підструктури та перекриттям підзадач.",
+    "topics": [
+      {
+        "topic_id": "dp_bitmask",
+        "topic_title": "ДП по бітових масках (Bitmask DP)",
+        "subtopics": [
+          {
+            "subtopic_id": "dp_bitmask_subsets",
+            "subtopic_title": "Перебір підмасок маски (Iterating Submasks)",
+            "microtopics": [
+              {
+                "micro_id": "micro_submask_enumeration",
+                "micro_title": "Класичний цикл перебору підмасок за O(3^N)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_submask_idiom",
+                    "nano_title": "Ідіома `s = (s - 1) & mask`",
+                    "summary": "Дозволяє перебрати всі 2^k підмасок за O(1) на підмаску без зайвих перевірок.",
+                    "invariant": "Кожен біт, який не встановлений у mask, завжди обнуляється операцією & mask.",
+                    "contest_trap": "Зациклення при досягненні s == 0, якщо умова циклу s >= 0 (потрібно `for(int s = mask; s; s = (s - 1) & mask)` та окремо s = 0).",
+                    "code_snippet": "for (int s = mask; s > 0; s = (s - 1) & mask) { /* обробка s */ }\n// Не забудьте обробити s = 0 окремо, якщо це допустимий стан!"
+                  },
+                  {
+                    "nano_id": "nano_sos_dp",
+                    "nano_title": "Sum over Subsets (SOS DP) за O(N · 2^N)",
+                    "summary": "Динаміка по бітах замість O(3^N) для обчислення сум по всіх підмасках.",
+                    "invariant": "dp[i][mask] містить суму значень для підмасок, що відрізняються від mask лише у перших i бітах.",
+                    "contest_trap": "Переплутаний порядок циклів: зовнішній цикл повинен іти по номеру біта (0..N-1), а внутрішній по масці (0..2^N-1).",
+                    "code_snippet": "for (int i = 0; i < N; ++i) {\n    for (int mask = 0; mask < (1 << N); ++mask) {\n        if (mask & (1 << i)) dp[mask] += dp[mask ^ (1 << i)];\n    }\n}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "subtopic_id": "dp_tsp_matching",
+            "subtopic_title": "Задача комівояжера (TSP) та мінімальне паросполучення",
+            "microtopics": [
+              {
+                "micro_id": "micro_tsp_states",
+                "micro_title": "Стан `dp[mask][last_v]` для пошуку гамільтонового шляху",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_tsp_base_case",
+                    "nano_title": "Базовий випадок і початкова ініціалізація нескінченністю",
+                    "summary": "Ініціалізація `dp[1 << start][start] = 0`, решта INF (0x3f3f3f3f), щоб уникнути переповнення при додаванні ребра.",
+                    "invariant": "Будь-який стан з n бітами переходить тільки у стан з n+1 бітами (гарантує DAG без циклів).",
+                    "contest_trap": "Використання 0x7fffffff (INT_MAX), що викликає int32 overflow при `dp + cost`.",
+                    "code_snippet": "memset(dp, 0x3f, sizeof(dp));\ndp[1 << 0][0] = 0;"
+                  },
+                  {
+                    "nano_id": "nano_matching_canonical",
+                    "nano_title": "Канонічний вибір першого вільного біта `__builtin_ctz(~mask)`",
+                    "summary": "Зниження складності паросполучення з O(N^2 · 2^N) до O(N · 2^N) через фіксацію найменшого вільного елемента.",
+                    "invariant": "Порядок парування не має значення, тому перший невикористаний елемент зобов'язаний з кимось спаруватися.",
+                    "contest_trap": "Подвійний підрахунок пар (комбінаторний вибух), якщо не фіксувати перший елемент.",
+                    "code_snippet": "int first_free = __builtin_ctz((~mask) & ((1 << N) - 1));"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "dp_tree",
+        "topic_title": "ДП на деревах (Tree DP)",
+        "subtopics": [
+          {
+            "subtopic_id": "dp_tree_rerooting",
+            "subtopic_title": "Техніка перепідвішування кореня (Rerooting / All Roots DP)",
+            "microtopics": [
+              {
+                "micro_id": "micro_rerooting_two_dfs",
+                "micro_title": "Двопрохідний DFS з префіксними та суфіксними префіксами",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_prefix_suffix_tree_exclusion",
+                    "nano_title": "Виключення внеску сина через масиви pref/suff",
+                    "summary": "Коли операція злиття не має зворотної (напр. std::max), внесок v виключається через префіксні і суфіксні максимуми братів.",
+                    "invariant": "Сукупний внесок усіх дітей крім v дорівнює pref[i-1] ⊕ suff[i+1].",
+                    "contest_trap": "Спроба ділити або віднімати за наявності нулів або незворотних напівкілець (max/min/gcd).",
+                    "code_snippet": "// pref_dp[i] = combine(pref_dp[i-1], child[i])\n// suff_dp[i] = combine(suff_dp[i+1], child[i])"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "dp_optimizations",
+        "topic_title": "Олімпіадні Оптимізації ДП (DP Optimizations)",
+        "subtopics": [
+          {
+            "subtopic_id": "dp_cht",
+            "subtopic_title": "Convex Hull Trick (CHT) та Li Chao Tree",
+            "microtopics": [
+              {
+                "micro_id": "micro_cht_static",
+                "micro_title": "Класичний CHT з монотонними кутовими коефіцієнтами k_i за O(N)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_cht_intersection_inequality",
+                    "nano_title": "Умова видалення непотрібної прямої через перетин",
+                    "summary": "Пряма L2 марна, якщо точка перетину intersect(L1, L3) лівіша за intersect(L1, L2).",
+                    "invariant": "Кутові коефіцієнти прямих у двозв'язній черзі строго зростають/спадають.",
+                    "contest_trap": "Ділення з плаваючою крапкою `double` (втрата точності); слід використовувати множення `(__int128)`.",
+                    "code_snippet": "// Перевірка: (b3 - b1) * (k1 - k2) <= (b2 - b1) * (k1 - k3)"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_ds",
+    "macro_title": "2. Просунуті Структури Даних (Advanced Data Structures)",
+    "description": "Ефективне зберігання, модифікація та запити на підмножинах за логарифмічний час.",
+    "topics": [
+      {
+        "topic_id": "ds_segtree",
+        "topic_title": "Дерево відрізків (Segment Tree)",
+        "subtopics": [
+          {
+            "subtopic_id": "ds_lazy_propagation",
+            "subtopic_title": "Відкладені операції (Lazy Propagation)",
+            "microtopics": [
+              {
+                "micro_id": "micro_lazy_push_pull",
+                "micro_title": "Розділення обов'язків `push()` та `pull()` (або `combine()`)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_lazy_assignment_vs_addition",
+                    "nano_title": "Сумісність операцій присвоєння (set) та додавання (add)",
+                    "summary": "Присвоєння повністю анулює попереднє накопичене додавання у вузлі.",
+                    "invariant": "Перед спуском у лівого і правого нащадків lazy-мітка батька зобов'язана бути скинута у нуль (push).",
+                    "contest_trap": "Забутий виклик push() у запиті query() при неповному покритті відрізка.",
+                    "code_snippet": "void push(int v, int l, int r) {\n    if (!has_lazy[v]) return;\n    int mid = (l + r) / 2;\n    apply(2 * v, l, mid, lazy[v]);\n    apply(2 * v + 1, mid + 1, r, lazy[v]);\n    has_lazy[v] = false;\n}"
+                  },
+                  {
+                    "nano_id": "nano_segtree_4n_bound",
+                    "nano_title": "Правильний ліміт розміру дерева: `4 * N`",
+                    "summary": "Для довільного N дерево відрізків вимагає до 4N елементів через неповні нижні шари.",
+                    "invariant": "Найближчий степінь двійки 2^{ceil(log2(N)) + 1} <= 4N.",
+                    "contest_trap": "Виділення масиву розміром `2 * N` призводить до непередбачуваного Runtime Error (SIGSEGV) на контесті.",
+                    "code_snippet": "const int MAXN = 200000;\nint tree[4 * MAXN];\nint lazy[4 * MAXN];"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "subtopic_id": "ds_persistent_segtree",
+            "subtopic_title": "Персистентне дерево відрізків (Persistent Segment Tree)",
+            "microtopics": [
+              {
+                "micro_id": "micro_kth_order_statistic",
+                "micro_title": "K-та порядкова статистика на відрізку [L, R] за O(log N)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_persistent_root_diff",
+                    "nano_title": "Інваріант різниці коренів `tree[root[R]].count - tree[root[L-1]].count`",
+                    "summary": "Відрізок [L, R] представляється як префіксний масив дерев: Root(R) мінус Root(L-1).",
+                    "invariant": "Кількість елементів у діапазоні значень [val_l, val_r] дорівнює count(R) - count(L-1).",
+                    "contest_trap": "Індексація L з одиниці: віднімання кореня `root[L]` замість `root[L-1]` виключає елемент на позиції L.",
+                    "code_snippet": "int count_left = tree[tree[v_r].left].cnt - tree[tree[v_l].left].cnt;\nif (k <= count_left) query(tree[v_l].left, tree[v_r].left, l, mid, k);\nelse query(tree[v_l].right, tree[v_r].right, mid + 1, r, k - count_left);"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "ds_dsu",
+        "topic_title": "Система неперетинних множин (Disjoint Set Union / DSU)",
+        "subtopics": [
+          {
+            "subtopic_id": "ds_dsu_rollback",
+            "subtopic_title": "DSU з можливістю відкату (DSU with Rollback)",
+            "microtopics": [
+              {
+                "micro_id": "micro_dsu_stack_history",
+                "micro_title": "Історія змін у стеці без евристики стиснення шляху за O(log N)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_dsu_no_path_compression",
+                    "nano_title": "Заборона стиснення шляху `parent[x] = find(parent[x])` при відкатах",
+                    "summary": "Стиснення шляху руйнує деревоподібну історію і робить точний відкат неможливим.",
+                    "invariant": "Глибина дерева обмежена O(log N) завдяки строгій евристиці за розміром або рангом (union-by-rank).",
+                    "contest_trap": "Автоматичне написання стиснення шляху, що ламає збережені у стеці попередні розміри.",
+                    "code_snippet": "int find(int i) {\n    while (i != parent[i]) i = parent[i];\n    return i;\n}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_graphs",
+    "macro_title": "3. Теорія Графів та Мереж (Graph & Network Theory)",
+    "description": "Моделювання зв'язків, топології, найкоротших шляхів, потоків та паросполучень.",
+    "topics": [
+      {
+        "topic_id": "graphs_shortest_paths",
+        "topic_title": "Найкоротші шляхи (Shortest Paths)",
+        "subtopics": [
+          {
+            "subtopic_id": "graphs_dijkstra",
+            "subtopic_title": "Алгоритм Дейкстри",
+            "microtopics": [
+              {
+                "micro_id": "micro_dijkstra_pq",
+                "micro_title": "Оптимізація з std::priority_queue за O(M log N)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_dijkstra_stale_pair_check",
+                    "nano_title": "Фільтрація застарілих пар: `if (d > dist[u]) continue;`",
+                    "summary": "Черга з пріоритетом може містити до O(M) старих записів для однієї вершини.",
+                    "invariant": "Коли вершина витягується з мінімальною вагою вперше, її шлях гарантовано фіналізований.",
+                    "contest_trap": "Пропуск перевірки `d > dist[u]` спричиняє сповільнення до O(M log M) і TLE на щільних графах.",
+                    "code_snippet": "auto [d, u] = pq.top(); pq.pop();\nif (d > dist[u]) continue;"
+                  },
+                  {
+                    "nano_id": "nano_dijkstra_long_long",
+                    "nano_title": "Зберігання відстаней у 64-бітному типі `long long`",
+                    "summary": "Шлях з N-1 ребер довжиною до 10^9 перевищує 2^31 - 1 уже при N > 3.",
+                    "invariant": "Максимальна відстань <= (N - 1) * MAX_W.",
+                    "contest_trap": "Використання int для пари у priority_queue `pair<int, int>` викликає переповнення та нескінченний цикл.",
+                    "code_snippet": "priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "subtopic_id": "graphs_01bfs",
+            "subtopic_title": "0-1 BFS за O(V + E)",
+            "microtopics": [
+              {
+                "micro_id": "micro_01bfs_deque",
+                "micro_title": "Використання std::deque замість priority_queue",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_deque_push_policy",
+                    "nano_title": "Ребро 0 -> push_front(), Ребро 1 -> push_back()",
+                    "summary": "Гарантує підтримку інваріанту монотонності відстаней у черзі без сортування.",
+                    "invariant": "Різниця відстаней між головою та хвостом дека ніколи не перевищує 1.",
+                    "contest_trap": "Помилковий push_back для ваги 0 руйнує порядок монотонності.",
+                    "code_snippet": "if (w == 0) q.push_front(to);\nelse q.push_back(to);"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "graphs_connectivity",
+        "topic_title": "Зв'язність та Компоненти (Connectivity & Bridges)",
+        "subtopics": [
+          {
+            "subtopic_id": "graphs_tarjan_bridges",
+            "subtopic_title": "Мости та точки зчленування (Tarjan's Bridges)",
+            "microtopics": [
+              {
+                "micro_id": "micro_tarjan_tin_low",
+                "micro_title": "Масиви часу входу `tin[u]` та мінімальної досяжності `low[u]`",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_bridge_strict_inequality",
+                    "nano_title": "Строга нерівність моста: `low[to] > tin[u]`",
+                    "summary": "Ребро (u, to) є мостом тоді і тільки тоді, коли з піддерева to немає зворотних ребер у предків u.",
+                    "invariant": "Для точок зчленування нерівність нестрога `low[to] >= tin[u]` (крім кореня DFS).",
+                    "contest_trap": "Випадковий перехід по ребру назад до безпосереднього батька p (потрібно `if (to == parent) continue`).",
+                    "code_snippet": "low[u] = min(low[u], low[to]);\nif (low[to] > tin[u]) {\n    // Ребро (u, to) — МІСТ!\n}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_math",
+    "macro_title": "4. Олімпіадна Математика та Теорія Чисел",
+    "description": "Теорія чисел, модулярна арифметика, комбінаторика, матриці та теорія ігор.",
+    "topics": [
+      {
+        "topic_id": "math_primes",
+        "topic_title": "Прості числа та подільність (Primes & Factoring)",
+        "subtopics": [
+          {
+            "subtopic_id": "math_linear_sieve",
+            "subtopic_title": "Лінійне решето Ератосфена за строго O(N)",
+            "microtopics": [
+              {
+                "micro_id": "micro_min_prime_factor",
+                "micro_title": "Кожне складене число викреслюється рівно один раз своїм найменшим простим дільником",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_break_on_divisibility",
+                    "nano_title": "Критична умова зупинки `if (i % p == 0) break;`",
+                    "summary": "Забезпечує лінійність O(N) замість O(N log log N).",
+                    "invariant": "Для наступних простих p' > p число i * p' мало б дільник p, отже було б викреслено не своїм мінімальним дільником.",
+                    "contest_trap": "Пропуск `break` повертає складність до звичайного решета з більшою константою.",
+                    "code_snippet": "for (int p : primes) {\n    if (p > lp[i] || i * p > MAX) break;\n    lp[i * p] = p;\n    if (i % p == 0) break;\n}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "math_combinatorics",
+        "topic_title": "Комбінаторика за модулем MOD (10^9 + 7 / 998244353)",
+        "subtopics": [
+          {
+            "subtopic_id": "math_inverse_factorials",
+            "subtopic_title": "Прекалькуляція факторіалів та зворотних факторіалів за O(N)",
+            "microtopics": [
+              {
+                "micro_id": "micro_single_mod_inv",
+                "micro_title": "Обчислення єдиного modInverse(fact[N]) і розмотування назад",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_inv_fact_stepback",
+                    "nano_title": "Крок назад: `inv_fact[i-1] = (inv_fact[i] * i) % MOD`",
+                    "summary": "Усуває необхідність викликати розширений алгоритм Евкліда чи швидке піднесення N разів.",
+                    "invariant": "1 / (i - 1)! = i / i!.",
+                    "contest_trap": "Виклик power(fact[i], MOD - 2) всередині циклу забирає O(N log MOD) і часто веде до TLE.",
+                    "code_snippet": "inv_fact[N] = power(fact[N], MOD - 2);\nfor (int i = N; i >= 1; --i) {\n    inv_fact[i - 1] = (1LL * inv_fact[i] * i) % MOD;\n}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_strings",
+    "macro_title": "5. Алгоритми на Рядках (Stringology)",
+    "description": "Пошук зразків, аналіз періодичності, хешування, суфіксні та префіксні структури.",
+    "topics": [
+      {
+        "topic_id": "strings_hashing",
+        "topic_title": "Поліноміальне Хешування (Rolling Hash)",
+        "subtopics": [
+          {
+            "subtopic_id": "strings_anti_hash_collision",
+            "subtopic_title": "Захист від колізій та анти-хеш тестів",
+            "microtopics": [
+              {
+                "micro_id": "micro_double_random_hash",
+                "micro_title": "Подвійний хеш з рандомізованою базою",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_random_base_chrono",
+                    "nano_title": "Генерація бази через `chrono::steady_clock`",
+                    "summary": "Фіксована база (наприклад, base = 31) вразлива до готових тестів-кілерів (Thue-Morse sequence) на Codeforces.",
+                    "invariant": "Ймовірність колізії для пари модулів (10^9+7, 10^9+9) менше 10^{-18}.",
+                    "contest_trap": "Використання unsigned long long з природним переповненням 2^64 (відомий анти-тест генератор взламує за O(N)).",
+                    "code_snippet": "mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());\nconst int BASE = uniform_int_distribution<int>(300, 10000)(rng) | 1;"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_foundations",
+    "macro_title": "6. Алгоритмічні Основи, Пошук та Ad-Hoc",
+    "description": "Базові шаблони мислення, робота з монотонністю та бітові маніпуляції.",
+    "topics": [
+      {
+        "topic_id": "foundations_binary_search",
+        "topic_title": "Двійковий пошук (Binary Search)",
+        "subtopics": [
+          {
+            "subtopic_id": "bs_on_answer",
+            "subtopic_title": "Бінарний пошук по відповіді (Bisection)",
+            "microtopics": [
+              {
+                "micro_id": "micro_bs_monotone_predicate",
+                "micro_title": "Предикат валідності `check(mid)` та інваріант меж",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_bs_mid_overflow",
+                    "nano_title": "Обчислення `mid = low + (high - low) / 2`",
+                    "summary": "Унеможливлює переповнення при великих межах (наприклад, high = 2 * 10^9).",
+                    "invariant": "Якщо check(mid) істинний, шукана відповідь належить [mid, high] (або [low, mid]).",
+                    "contest_trap": "Зависання в нескінченному циклі при двох елементах `high - low == 1`, якщо ділення заокруглює не в той бік.",
+                    "code_snippet": "long long low = 1, high = 2e18, ans = -1;\nwhile (low <= high) {\n    long long mid = low + (high - low) / 2;\n    if (check(mid)) { ans = mid; low = mid + 1; } \n    else { high = mid - 1; }\n}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "foundations_bit_tricks",
+        "topic_title": "Бітові операції та процесорні інструкції (Bitwise Hacks)",
+        "subtopics": [
+          {
+            "subtopic_id": "bit_builtins",
+            "subtopic_title": "Вбудовані функції GCC (__builtin_*)",
+            "microtopics": [
+              {
+                "micro_id": "micro_fast_bit_math",
+                "micro_title": "Обчислення кількості бітів та позицій за 1 такт процесора",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_builtin_64bit_suffix",
+                    "nano_title": "Обов'язковий суфікс `ll`: `__builtin_popcountll(x)`",
+                    "summary": "Для чисел типу long long без суфікса `ll` старші 32 біти ігноруються!",
+                    "invariant": "Компілятор розгортає це в апаратні команди POPCNT / BSF / BSR / LZCNT.",
+                    "contest_trap": "Виклик `__builtin_clz(0)` або `__builtin_ctz(0)` повертає Undefined Behavior!",
+                    "code_snippet": "int bits = __builtin_popcountll(mask);\nint lowest_bit_idx = (mask > 0) ? __builtin_ctzll(mask) : -1;"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "macro_id": "macro_tactics",
+    "macro_title": "7. Олімпіадна Тактика, Граблі та Стрес-Тестування",
+    "description": "Бойові прийоми, налаштування компілятора, анти-баг чек-листи та пошук контрприкладів.",
+    "topics": [
+      {
+        "topic_id": "tactics_stress_testing",
+        "topic_title": "Стрес-тестування (Fuzzing & Verification)",
+        "subtopics": [
+          {
+            "subtopic_id": "tactics_tree_generator",
+            "subtopic_title": "Генерація випадкових дерев та зв'язних графів",
+            "microtopics": [
+              {
+                "micro_id": "micro_random_tree_prufer",
+                "micro_title": "Генератор випадкових дерев різної топології (ланцюг, зірка, бамбук)",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_bamboo_vs_star_trap",
+                    "nano_title": "Спеціальні тести проти рекурсивного переповнення стеку (Stack Overflow)",
+                    "summary": "Глибокий ланцюг довжиною 200,000 спричиняє переповнення стеку при рекурсивному DFS у C++ на Windows.",
+                    "invariant": "Коректний розв'язок повинен проходити і зірку (максимальний степінь O(N)), і бамбук (максимальна глибина O(N)).",
+                    "contest_trap": "Випадкове дерево `parent[i] = rand(1, i-1)` має очікувану глибину лише O(log N) і не ловить stack overflow!",
+                    "code_snippet": "// Генерація бамбука:\nfor (int i = 2; i <= N; ++i) add_edge(i - 1, i);\n// Генерація зірки:\nfor (int i = 2; i <= N; ++i) add_edge(1, i);"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "topic_id": "tactics_submit_checklist",
+        "topic_title": "Чек-лист перед здачею (Pre-Submit Checklist)",
+        "subtopics": [
+          {
+            "subtopic_id": "tactics_overflow_traps",
+            "subtopic_title": "Анти-Overflow та Граничні випадки",
+            "microtopics": [
+              {
+                "micro_id": "micro_pre_submit_audit",
+                "micro_title": "Швидкий аудит коду перед кнопкою Submit",
+                "nanotopics": [
+                  {
+                    "nano_id": "nano_1ll_shift_trap",
+                    "nano_title": "Зсув `1LL << k` замість `1 << k`",
+                    "summary": "У виразі `1 << 35` 1 є 32-бітним int, що веде до невизначеної поведінки (UB).",
+                    "invariant": "Будь-який бітовий зсув на k >= 31 зобов'язаний оперувати 64-бітним типом 1ULL або 1LL.",
+                    "contest_trap": "Помилка компілюється без попереджень, але повертає від'ємні числа або 0 під час контесту.",
+                    "code_snippet": "long long mask = (1LL << k);"
+                  },
+                  {
+                    "nano_id": "nano_fast_io_sync",
+                    "nano_title": "Розрив синхронізації `ios_base::sync_with_stdio(0); cin.tie(0);`",
+                    "summary": "Прискорює роботу cin/cout у 5-10 разів, вирівнюючи швидкість із scanf/printf.",
+                    "invariant": "Після виклику суворо заборонено змішувати `cin` з `scanf`/`getchar`.",
+                    "contest_trap": "Використання `std::endl` замість `\\n` форсує очищення буфера (flush) і призводить до TLE.",
+                    "code_snippet": "ios_base::sync_with_stdio(false);\ncin.tie(nullptr);\ncout.tie(nullptr);"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

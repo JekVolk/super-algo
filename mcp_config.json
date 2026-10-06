@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "leetcode": {
+      "command": "npx",
+      "args": ["-y", "@mcpfun/mcp-server-leetcode"]
+    },
+    "codeforces": {
+      "command": "npx",
+      "args": ["-y", "codeforces-mcp"]
+    }
+  }
+}
