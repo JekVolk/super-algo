@@ -126,8 +126,10 @@ python scripts/stress_tester.py generator.py solution.py naive.py 1000
 ## 📚 Повна Документація
 
 - 📘 **[USER_GUIDE.md](file:///C:/project/super-algo/USER_GUIDE.md)** — Повна інструкція користувача: веб-інтерфейс, шпори, SRS, скрапери, лінтери, контест-пам'ятка.
+- 🎯 **[docs/PROBLEM_KEYWORDS_AND_MARKERS.md](file:///C:/project/super-algo/docs/PROBLEM_KEYWORDS_AND_MARKERS.md)** — Словник слів-маркерів та логічних тригерів: як за 60 секунд розпізнати алгоритм за формулюванням умови.
 - ⚡ **[AGENTS.md](file:///C:/project/super-algo/AGENTS.md)** — Бойовий регламент, 8-кроковий стандарт розбору задач, інваріанти, правила коду.
 - 🗺️ **[ROADMAP.md](file:///C:/project/super-algo/ROADMAP.md)** — 5-рівнева декомпозиція та дорожня карта підготовки до ICPC / IOI.
 - 🌳 **[docs/ALGORITHM_DECISION_TREE.md](file:///C:/project/super-algo/docs/ALGORITHM_DECISION_TREE.md)** — Дерево вибору алгоритмів за обмеженнями та структурами.
+
 
 

@@ -247,8 +247,10 @@ git push -u origin master
 ---
 
 ## 💡 Пам'ятка Команди на Контесті
-1. **Перші 15 хвилин:** Повний огляд умов, класифікація за [docs/ALGORITHM_DECISION_TREE.md](file:///C:/project/super-algo/docs/ALGORITHM_DECISION_TREE.md).
-2. **Не сідайте за клавіатуру без паперу:** Сигнатура станів, ручний крайовий тест ($N=1$, переповнення 32-біт).
-3. **Перед Submit:** Запустіть перевірку через `scripts/pitfall_detector.py` або перевірте чек-лист `1LL << k`, `ios_base::sync_with_stdio(0)`, `\n` замість `endl`.
-4. **При отриманні WA:** Не вгадуйте навмання — за 3 хвилини напишіть наївний перебір і запустіть `scripts/stress_tester.py`.
+1. **Перші 15 хвилин:** Повний огляд умов, пошук **слів-маркерів** (див. довідник [docs/PROBLEM_KEYWORDS_AND_MARKERS.md](file:///C:/project/super-algo/docs/PROBLEM_KEYWORDS_AND_MARKERS.md)) та класифікація за [docs/ALGORITHM_DECISION_TREE.md](file:///C:/project/super-algo/docs/ALGORITHM_DECISION_TREE.md).
+2. **Аналіз сигнатури обмежень:** $N \le 20 \implies$ Bitmask DP, $N \le 40 \implies$ Meet-in-the-middle, $N \le 2 \cdot 10^5 \implies O(N \log N)$.
+3. **Не сідайте за клавіатуру без паперу:** Сигнатура станів, ручний крайовий тест ($N=1$, переповнення 32-біт).
+4. **Перед Submit:** Запустіть перевірку через `scripts/pitfall_detector.py` або перевірте чек-лист `1LL << k`, `ios_base::sync_with_stdio(0)`, `\n` замість `endl`.
+5. **При отриманні WA:** Не вгадуйте навмання — за 3 хвилини напишіть наївний перебір і запустіть `scripts/stress_tester.py`.
+
 
