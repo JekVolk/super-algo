@@ -3,6 +3,9 @@ import sys
 import os
 import math
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 TEST_CASES = [
     1.0,
     2.0,

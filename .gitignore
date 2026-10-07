@@ -16,3 +16,6 @@ Thumbs.db
 
 # Failing stress test logs
 failing_test.txt
+
+# Scratch temporary dumps and scripts
+scratch/

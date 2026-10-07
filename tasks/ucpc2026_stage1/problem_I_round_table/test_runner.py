@@ -2,6 +2,9 @@ import subprocess
 import sys
 import os
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 TEST_CASES = [
     ("4 2\n1 2\n3 4", "2"),
     ("4 2\n1 3\n2 4", "1"),

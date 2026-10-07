@@ -2,6 +2,9 @@ import subprocess
 import sys
 import os
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 def run_interactive_test(n, target_a, target_b):
     p = subprocess.Popen(
         [sys.executable, "solution.py"],

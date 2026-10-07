@@ -106,4 +106,28 @@ python scripts/stress_tester.py generator.py solution.py naive.py 1000
 ```
 Скрипт згенерує до 1000 тестів, знайде першу невідповідність між швидким розв'язком і наївним перебором та збереже мінімальний контрприклад у `failing_test.txt`.
 
+---
+
+## 🏆 База Задач UCPC 2026 (100% Coverage)
+
+- **UCPC 2026 I Етап (14/14 задач):**
+  * `problem_A_antivirus` ... `problem_N_weather_diary`
+  * Запуск перевірки: `python tasks/test_all_stage1.py`
+- **UCPC 2026 Пробний тур / Eolymp Practice (10/10 задач):**
+  * `problem_A_standard1_sum_ab` ... `problem_F_standard6_distinct_segments`
+  * `problem_G_interactive1_guess_number` (Інтерактивна задача)
+  * `problem_H_multiplerun1_encode_decode` (Multi-run протокол)
+  * `problem_I_outputonly1_eight_queens` (Output-only)
+  * `problem_J_functionnomain1_max_pair_sum` (Бібліотечна функція без main)
+  * Запуск перевірки: `python tasks/test_all_practice.py`
+
+---
+
+## 📚 Повна Документація
+
+- 📘 **[USER_GUIDE.md](file:///C:/project/super-algo/USER_GUIDE.md)** — Повна інструкція користувача: веб-інтерфейс, шпори, SRS, скрапери, лінтери, контест-пам'ятка.
+- ⚡ **[AGENTS.md](file:///C:/project/super-algo/AGENTS.md)** — Бойовий регламент, 8-кроковий стандарт розбору задач, інваріанти, правила коду.
+- 🗺️ **[ROADMAP.md](file:///C:/project/super-algo/ROADMAP.md)** — 5-рівнева декомпозиція та дорожня карта підготовки до ICPC / IOI.
+- 🌳 **[docs/ALGORITHM_DECISION_TREE.md](file:///C:/project/super-algo/docs/ALGORITHM_DECISION_TREE.md)** — Дерево вибору алгоритмів за обмеженнями та структурами.
+
 

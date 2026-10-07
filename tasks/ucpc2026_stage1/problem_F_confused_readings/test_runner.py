@@ -2,6 +2,9 @@ import subprocess
 import sys
 import os
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 def generate_test(orig):
     n = len(orig)
     all_vals = []

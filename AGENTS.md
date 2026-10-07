@@ -40,13 +40,26 @@
    - Перед створенням пояснення код на C++20 та Python 3.12 обов'язково проганяється через `test_runner.py` або `stress_tester.py`.
    - Заборонено підганяти відповіді в тестах (як було з $3^f+3$ замість $3^{f+3}$).
 4. **Повнота Покриття (100% Coverage):**
-   - У контесті мають бути розібрані **ВСІ** задачі без винятку (усі 14 задач I етапу: A, B, C, D, E, F, G, H, I, J, K, L, M, N + задачі пробного туру).
-   - Кожна задача повинна мати свій `README.md` (8 кроків), `solution.cpp`, `solution.py`, `test_runner.py` та покрокову візуалізацію в `web/ucpc_animator.html`.
+   - У контесті мають бути розібрані **ВСІ** задачі без винятку:
+     * **UCPC 2026 I Етап:** усі 14 задач (A, B, C, D, E, F, G, H, I, J, K, L, M, N)
+     * **UCPC 2026 Пробний тур (Eolymp):** усі 10 задач (A–J: стандартні 1–6, інтерактивна G, multi-run H, output-only I, function-without-main J)
+   - Кожна задача повинна мати свій `README.md` (8 кроків), `solution.cpp`, `solution.py`, `test_runner.py`, `stress_tester.py` та за потреби покрокову візуалізацію в `web/ucpc_animator.html`.
+5. **Перевірка перед комітом (Pre-Commit Zero Tolerance):**
+   - Перед фіксацією змін обов'язково проганяти повні сьюти:
+     * `python tasks/test_all_stage1.py` (14/14 OK)
+     * `python tasks/test_all_practice.py` (10/10 OK)
 
 ---
 
-## 🛠️ Інструменти
-- **Слухач турів:** `python scripts/companion_listener.py` (порт 10043 для Competitive Companion).
-- **Стрес-тестувальник:** `python scripts/stress_tester.py gen.py fast.py naive.py`.
-- **Інтерактивне Дерево та 5-рівневий навігатор:** `python scripts/open_visualizer.py` (файл `web/index.html`).
-- **Покроковий Аніматор Задач UCPC:** `python scripts/open_visualizer.py anim` (файл `web/ucpc_animator.html`).
+## 🛠️ Інструменти екосистеми
+- **Головне консольне меню:** `python scripts/menu.py` (або `super-algo.bat`)
+- **Слухач турів:** `python scripts/companion_listener.py` (порт 10043 для Competitive Companion)
+- **Скрапер Eolymp:** `python scripts/eolymp_scraper.py` (збереження контестів, умов, тестів)
+- **Імпортер Codeforces:** `python scripts/cf_fetcher.py <contestId> <index>`
+- **Стрес-тестувальник:** `python scripts/stress_tester.py gen.py fast.py naive.py 500` (підтримка C++20 та Python 3.12)
+- **Бібліотека генерації стрес-тестів:** `scripts/test_gen_lib.py` (бамбуки, зірки, зважені графи)
+- **Лінтер олімпіадних граблів:** `python scripts/pitfall_detector.py tasks/`
+- **Калькулятор складності та TLE:** `python scripts/tle_predictor.py --n 200000 --complexity NlogN --tl 1.0`
+- **Інтерактивне Дерево та 5-рівневий навігатор:** `python scripts/open_visualizer.py` (файл `web/index.html`)
+- **Покроковий Аніматор Задач UCPC:** `python scripts/open_visualizer.py anim` (файл `web/ucpc_animator.html`)
+- **REST API бекенд:** `uvicorn api.main:app --reload --port 8000` (Swagger UI: `/docs`)
